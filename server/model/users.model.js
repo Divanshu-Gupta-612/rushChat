@@ -15,13 +15,17 @@ function creating_Schema(){
         password : {
             type : String,
             required : true,
+        },
+        accessToken :{
+            type : String,
+            required : true,
         }
     })
     return userSchema;
 }
 
 function userModelFunction(){
-    return usermodel = new mongoose.model('user', creating_Schema());
+    return usermodel = new mongoose.model('users', creating_Schema());
 }
 
-export default userModelFunction();
+module.exports = userModelFunction();

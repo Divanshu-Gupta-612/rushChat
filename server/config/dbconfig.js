@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 async function database_connectivity(url){
 
     mongoose.connect(url).then((res)=>{
@@ -10,4 +9,4 @@ async function database_connectivity(url){
     })
 }
 
-export default database_connectivity;
+module.exports = database_connectivity;
