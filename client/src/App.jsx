@@ -1,12 +1,10 @@
-import LoginPage from "./components/Login/Login"
-import HomePage from "./components/Home/HomePage"
+import AllRoutes from './common/AllRoutes';
 
 function App() {
 
   return (
     <>
-      <LoginPage/>
-      <HomePage/>
+      <AllRoutes/>
     </>
   )
 }
