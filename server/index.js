@@ -10,9 +10,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const userRouter = require('./routes/users.routes');
+app.use('/auth/User', userRouter);
 
 database_connectivity(process.env.MongoDBuRL);
 
 app.listen(process.env.PORT, ()=>{
-    console.log("The server is Running on http://localhost:"+PORT);
+    console.log("The server is Running on http://localhost:"+process.env.PORT);
 })

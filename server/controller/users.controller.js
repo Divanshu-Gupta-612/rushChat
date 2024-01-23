@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const {jwtTokenGen} = require('../service/jwtgenrator');
 
 const userRegistration = async(req, res)=>{
-    const {userName, password, email} = req.body;
     try{
+        const {userName, password, email} = req.body;
         const userExist = await userModel.findOne({email:email});
         if(userExist){
             return res.status(409).json({msg: "User allready Exist", userDetail : userExist});
@@ -29,8 +29,8 @@ const userRegistration = async(req, res)=>{
 };
 
 const userLogin = async(req, res)=>{
-    const {email, password} = req.body();
     try{
+        const {email, password} = req.body;
         const userExist = await userModel.findOne({email:email}); 
         if(!userExist){
             return res.status(404).json({msg: "User does'nt exist"}); // throw this error and catch on the catch function
