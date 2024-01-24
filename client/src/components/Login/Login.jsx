@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     FormControl,
     FormLabel,
@@ -79,7 +80,7 @@ export default function LoginPage() {
 
     return (
         <Box className='flex justify-center items-center w-full h-[100vh] bg-gray-800 text-white'>
-            <Box className=' border rounded-lg p-12'>
+            <Box className=' border rounded-lg p-12 w-[25%]'>
                 <Center className='text-2xl font-semibold pb-5 uppercase flex flex-col' gap={3}>
                     <span className='text-6xl'><FaRocketchat className='text-green-600' /></span>
                     <span>Login</span>
@@ -93,7 +94,7 @@ export default function LoginPage() {
                         <FormLabel>Password :</FormLabel>
                         <Input onChange={updatePassword} type='password' />
                     </FormControl>
-                    <Button className='text-white bg-gray-800'>Login</Button>
+                    <Button onSubmit={handelSubmit} className='text-white bg-gray-800'>Login</Button>
                 </Flex>
             </Box>
         </Box>

@@ -38,7 +38,7 @@ const userLogin = async(req, res)=>{
         const passwordMatch = await bcrypt.compare(password,userExist.password); 
 
         if(passwordMatch){
-            return res.json({msg:"User is login sucessFull"});
+            return res.json({msg:"User is login sucessFull", userDetail : userExist});
         }
         throw new Error({message:"Incorrect Password", passwordMatch});
     }catch(err){
