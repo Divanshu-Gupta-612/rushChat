@@ -25,11 +25,17 @@ export default function LoginPage() {
 
     function handelSubmit(e){
         e.preventDefault();
-        // apiAuthInstance.post('/ath')
+        apiAuthInstance.post('/auth/user/register', {userData})
+        .then((res)=>{
+            console.log("Data is from login response ",res);
+        }).catch((err)=>{
+            console.log("Error is from login error :",err);
+        });
     }
+
     return (
         <Box className='flex justify-center items-center w-full h-[100vh] bg-gray-800 text-white'>
-            <Box className=' border rounded-lg p-12'>
+            <Box className=' border rounded-lg p-12 w-[25%]'>
                 <Center className='text-2xl font-semibold pb-5 uppercase flex flex-col' gap={3}>
                     <span className='text-6xl'><FaRocketchat className='text-green-600'/></span>
                     <span>SignUp</span>
