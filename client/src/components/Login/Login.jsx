@@ -9,10 +9,23 @@ import {
     Button,
     Flex
 } from '@chakra-ui/react';
-
 import { FaRocketchat } from "react-icons/fa";
 
 export default function LoginPage() {
+
+    const[userData, setUserData] = useState();
+
+    function handelUserData(e){
+        e.preventDefault();
+
+        setUserData({
+            ...userData, [e.target.name] : e.target.value,
+        })
+    }
+
+    function handelSubmit(){
+
+    }
     return (
         <Box className='flex justify-center items-center w-full h-[100vh] bg-gray-800 text-white'>
             <Box className=' border rounded-lg p-12'>
