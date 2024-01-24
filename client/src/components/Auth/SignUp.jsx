@@ -25,7 +25,7 @@ export default function LoginPage() {
 
     function handelSubmit(e){
         e.preventDefault();
-        apiAuthInstance.post('/ath')
+        // apiAuthInstance.post('/ath')
     }
 
     return (
@@ -38,19 +38,19 @@ export default function LoginPage() {
                 <Flex flexDirection='column' gap='15px'>
                     <FormControl>
                         <FormLabel>Email :</FormLabel>
-                        <Input onChange={handelUserData} type='email'/>
+                        <Input onChange={handelUserData} type='email' name='email'/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>Username :</FormLabel>
-                        <Input onChange={handelUserData} type='text'/>
+                        <Input onChange={handelUserData} type='text' name='username'/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>Password :</FormLabel>
-                        <Input onChange={handelUserData} type='password'/>
+                        <Input onChange={handelUserData} type='password' name='password'/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>Re-Password :</FormLabel>
-                        <Input onChange={handelUserData} type='password'/>
+                        <Input onChange={handelUserData} type='password' name='re-password'/>
                     </FormControl>
                     <Button className='text-white bg-gray-800'>SignUp</Button>
                 </Flex>

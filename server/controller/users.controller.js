@@ -4,17 +4,17 @@ const {jwtTokenGen} = require('../service/jwtgenrator');
 
 const userRegistration = async(req, res)=>{
     try{
-        const {userName, password, email} = req.body;
+        const {username, password, email} = req.body;
         const userExist = await userModel.findOne({email:email});
         if(userExist){
             return res.status(409).json({msg: "User allready Exist", userDetail : userExist});
         }
         
         const hashPass = await bcrypt.hash(password, 10);
-        const accessToken = jwtTokenGen({userName, email});
+        const accessToken = jwtTokenGen({username, email});
         const user = new userModel({
             email,
-            userName,
+            userName : username,
             password : hashPass,
             accessToken
         })
