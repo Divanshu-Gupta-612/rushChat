@@ -71,9 +71,9 @@ export default function LoginPage() {
     function updateRePassword(e) {
         setRePassword(e.target.value)
         setIsPasswordMatch(
-            
+            password===rePassword
         )
-        console.log(email, isEmailValid);
+        console.log(rePassword, password, isPasswordMatch, !(password!==rePassword));
     }
 
     function updatePassword(e) {
@@ -120,27 +120,27 @@ export default function LoginPage() {
                         <Input onChange={handelUserData} type='text' name='username' />
                     </FormControl>
 
-                    <FormControl isValid={!isPasswordValid}>
+                    <FormControl isInvalid={!isPasswordValid}>
                         <FormLabel>Password :</FormLabel>
                         <Input onChange={(e) => { handelUserData(e); updatePassword(e) }} type='password' name='password' />
                         {isPasswordValid ?
                             <FormHelperText>
-                                Enter the password.
+                                Enter the password. {password}
                             </FormHelperText>
                             :
-                            <FormErrorMessage>Invalid Password</FormErrorMessage>
+                            <FormErrorMessage>Invalid Password {password}</FormErrorMessage>
                         }
                     </FormControl>
 
-                    <FormControl isValid={!isPasswordMatch}>
+                    <FormControl isInvalid={!isPasswordMatch}>
                         <FormLabel>Re-Password :</FormLabel>
-                        <Input onChange={(e)=>{handelUserData(e); }} type='password' name='re-password' />
+                        <Input onChange={(e)=>{handelUserData(e); updateRePassword(e)}} type='password' name='re-password' />
                         {isPasswordMatch ?
-                            <FormHelperText>
-                                Enter the password.
+                            <FormHelperText color='green'>
+                                Password Matched. {rePassword}
                             </FormHelperText>
                             :
-                            <FormErrorMessage>Invalid Password</FormErrorMessage>
+                            <FormErrorMessage>Invalid Password {rePassword}</FormErrorMessage>
                         }
                     </FormControl>
 
