@@ -6,7 +6,7 @@ export const AuthProvider = ({ children }) => {
 
     const [userData, setUserData] = useState(()=>{
         const storedUserData = localStorage.getItem('userData');
-        return storedUserData ? JSON.parse(storedUserData) : true;
+        return storedUserData ? JSON.parse(storedUserData) : null;
     });
 
     const [token, setToken] = useState(() => {

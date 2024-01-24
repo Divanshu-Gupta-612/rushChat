@@ -11,7 +11,6 @@ import {
     Flex
 } from '@chakra-ui/react';
 import { FaRocketchat } from "react-icons/fa";
-import { useState } from 'react';
 import apiAuthInstance from '../../api/authApi';
 
 export default function LoginPage() {
