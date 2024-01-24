@@ -27,6 +27,7 @@ export default function LoginPage() {
         e.preventDefault();
         apiAuthInstance.post('/ath')
     }
+
     return (
         <Box className='flex justify-center items-center w-full h-[100vh] bg-gray-800 text-white'>
             <Box className=' border rounded-lg p-12'>

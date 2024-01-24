@@ -1,7 +1,9 @@
 import { Box, Button, Flex, Center, Spacer, Input } from "@chakra-ui/react"
+import { io } from 'socket.io-client'
 
 function HomePage() {
 
+    const socket = io()
   return (
     <Flex className=" w-[100%] h-[100vh] p-5">
       <Box className=" w-1/5 border p-5">
