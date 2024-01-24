@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 
 const userRouter = require('./routes/users.routes');
-app.use('/auth/User', userRouter);
+app.use('/auth/user', userRouter);
 
 database_connectivity(process.env.MongoDBuRL);
 

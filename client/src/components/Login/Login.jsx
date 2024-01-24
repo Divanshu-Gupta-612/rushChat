@@ -10,6 +10,7 @@ import {
     Flex
 } from '@chakra-ui/react';
 import { FaRocketchat } from "react-icons/fa";
+import apiAuthInstance from '../../api/authApi';
 
 export default function LoginPage() {
 
@@ -24,7 +25,11 @@ export default function LoginPage() {
     }
 
     function handelSubmit(){
-
+        apiAuthInstance.post('/auth/user/login', userData).then((res)=>{
+            console.log("The Response is here  from login page : ",res);
+        }).catch((err)=>{
+            console.log("Error in the Login Page :", err);
+        })
     }
     return (
         <Box className='flex justify-center items-center w-full h-[100vh] bg-gray-800 text-white'>
@@ -36,11 +41,11 @@ export default function LoginPage() {
                 <Flex flexDirection='column' gap='20px'>
                     <FormControl>
                         <FormLabel>Email :</FormLabel>
-                        <Input type='email'/>
+                        <Input onChange={handelUserData} type='email' name='email'/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>Password :</FormLabel>
-                        <Input type='password'/>
+                        <Input onChange={handelUserData} type='password' name="password"/>
                     </FormControl>
                     <Button className='text-white bg-gray-800'>Login</Button>
                 </Flex>
