@@ -16,7 +16,6 @@ import { AiOutlineSend } from "react-icons/ai";
 
 function HomePage() {
 
-    const socket = io()
   return (
     <Flex className=" w-[100%] h-[100vh] p-5 bg-gray-800 text-white gap-3">
       <Box className=" w-1/5 border p-5 rounded-xl">
