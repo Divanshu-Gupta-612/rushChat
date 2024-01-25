@@ -20,6 +20,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
+    const navigate = useNavigate();
+    const toast = useToast();
     const [userData, setUserData] = useState({
         'email': '',
         'password': '',
@@ -110,9 +112,8 @@ export default function LoginPage() {
         apiAuthInstance.post('/auth/user/register', {
             email: userData.email,
             username: userData.username,
-            password: password,
+            password: userData.password,
         }).then((res) => {
-            console.log("This is the response data from signUp Page : ", res?.data);
             toast({
                 title: res?.data?.msg,
                 description: "We've created your account for you. Please login",
@@ -122,7 +123,6 @@ export default function LoginPage() {
             })
             navigate('/auth/login');
         }).catch((err) => {
-            console.log("This is the error from the signup page", err);
             toast({
                 title: err?.response?.data?.msg,
                 description: "Tip : Use other detail if you have tried many times",
@@ -141,7 +141,6 @@ export default function LoginPage() {
                     <span>SignUp</span>
                 </Center>
                 <Flex flexDirection='column' gap='15px'>
-
                     <Flex className="gap-3">
                         <FormControl isInvalid={!isEmailValid} isRequired={true} >
                             <FormLabel>Email :</FormLabel>

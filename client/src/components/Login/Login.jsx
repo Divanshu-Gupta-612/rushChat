@@ -43,7 +43,7 @@ export default function LoginPage() {
     }
 
     function updateEmail(e) {
-         if(e.target.value!==''){
+        if(e.target.value!==''){
             setIsEmailValid(isValidEmail(userData['email']))
         }
     }
@@ -62,7 +62,7 @@ export default function LoginPage() {
             console.log("This is response data from Login",res);
             userLogin({userdata: res?.data?.userDetail});
             toast({
-                title: 'Login Sucessfull.',
+                title: res?.data?.msg,
                 description: "We've logged into your account for you.",
                 status: 'success',
                 duration: 9000,
@@ -103,7 +103,7 @@ export default function LoginPage() {
                     </FormControl>
                     <FormControl id='password' isRequired={true}>
                         <FormLabel>Password :</FormLabel>
-                        <Input onChange={handelUserData} type='password' />
+                        <Input onChange={handelUserData} type='password' name="password"/>
                     </FormControl>
                     <Button 
                         onClick={handelSubmit}  

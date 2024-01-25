@@ -21,7 +21,12 @@ database_connectivity(process.env.MongoDBuRL);
 
 // ----------------------------------------- socket io logic d---------------------------------------- 
 
-
+io.on('connection',(socket)=>{
+    const id = socket.id.substring(0,4);
+    socket.on("msgSent", (msg)=>{
+        socket.broadcast.emit('receiveMsg', {id : id, msg : msg});
+    })
+})
 
 server.listen(process.env.PORT, ()=>{
     console.log("The server is Running on http://localhost:"+process.env.PORT);
