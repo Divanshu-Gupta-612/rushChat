@@ -15,47 +15,30 @@ import { FaRocketchat } from 'react-icons/fa6'
 import { AiOutlineSend } from "react-icons/ai";
 import { useAuth } from "../../common/useAuth";
 import { Socket, io } from 'socket.io-client'
-import { useEffect, useState } from "react";
+import { useState } from "react";
+const socket = io();
 
 function HomePage() {
-  const socket = io();
-
-  const [msg, setMsg] = useState('');
-
-  const msgShowArea = document.querySelector('.msgShowArea');
-  
-  function forSendingMsg() {
-    const msgTemplate = `<Box>
-                        <Box className="float-left flex items-center">
-                          <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                          <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black">
-                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
-                          </Text>
-                        </Box>
-                      </Box>`
-    socket.emit('msgSent', msg);
-    msgShowArea.appendChild(msgTemplate);
-  }
-
-  // useEffect(()=>{
-    socket.on('receiveMsg' , ({id, msg})=>{
-      const msgTemplate = `
-      <Box>
-        <Box className="float-right flex items-center">
-          <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black">
-            ${msg}
-          </Text>
-          <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
-        </Box>
-      </Box>
-      `
-      msgShowArea.appendChild(msgTemplate);
-    })
-  // })
-
   // Logout Function
   const { userLogout } = useAuth();
-  
+
+  const [msg, setMsg] = useState('');
+  const [userMsg, setUserMsg] = useState([]);
+
+  function forSendingMsg(){
+    setUserMsg([
+      ...userMsg, { type: 'sent', content: msg, id : "You"}
+    ])
+    socket.emit('msgSent', msg);
+    setMsg("");
+  };
+
+  socket.on('receiveMsg', ({ id, msg }) => {
+    setUserMsg([
+      ...userMsg, { type: 'reveived', content: msg , id : id}
+    ]);
+  });
+
   function userLogOutFunction() {
     userLogout();
   }
@@ -115,27 +98,33 @@ function HomePage() {
                 </Box>
               </Stack>
             </Box>
-            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3">
-              <Box>
-                <Box className="float-left flex items-center">
-                  <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                  <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
-                  </Text>
-                </Box>
-              </Box>
-              <Box>
-                <Box className="float-right flex items-center">
-                  <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
-                  </Text>
-                  <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
-                </Box>
-              </Box>
+            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-[700px] overflow-scroll">
+              {
+                userMsg.map((item, index) =>
+                  (item.type === 'sent') ?
+                    <Box key={index}>
+                      <Box className="float-right flex items-center">
+                        <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black flex flex-col">
+                          <span> {item.content} </span><span className="text-xs font-medium">{item.id}</span>
+                        </Text>
+                        <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
+                      </Box>
+                    </Box>
+                    :
+                    <Box key={index}>
+                      <Box className="float-left flex items-center">
+                        <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                          <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black flex flex-col">
+                          <span className="text-xs font-medium">{item.id}</span><span> {item.content} </span>
+                          </Text>
+                      </Box>
+                    </Box>
+                )
+              }
             </Box>
           </Box>
           <Flex gap='10px'>
-            <Input onChange={(e)=>setMsg(e.target.value)} placeholder="Enter Message" />
+            <Input onChange={(e) => setMsg(e.target.value)} value={msg} placeholder="Enter Message" />
             <Button onClick={forSendingMsg} className="border text-center px-6">
               <AiOutlineSend className="text-black text-xl" />
             </Button>
