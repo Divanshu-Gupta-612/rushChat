@@ -15,11 +15,11 @@ import apiAuthInstance from '../../api/authApi';
 
 export default function LoginPage() {
 
-    const [userData, setUserData] = useState()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [isEmailValid, setIsEmailValid] = useState(false)
-    const [isPasswordValid, setIsPasswordValid] = useState(false)
+    const [userData, setUserData] = useState({
+        'email' : '',
+        'password' : ''
+    })
+    const [isEmailValid, setIsEmailValid] = useState(true)
 
     function handelUserData(e) {
         e.preventDefault();
@@ -35,42 +35,10 @@ export default function LoginPage() {
         return emailRegex.test(email);
     }
 
-    function isValidPassword(password) {
-        // Minimum length of 8 characters
-        const minLength = 8;
-
-        // At least one uppercase letter
-        const hasUppercase = /[A-Z]/.test(password);
-
-        // At least one lowercase letter
-        const hasLowercase = /[a-z]/.test(password);
-
-        // At least one digit
-        const hasDigit = /\d/.test(password);
-
-        // At least one special character
-        const hasSpecialChar = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password);
-
-        // Check if all conditions are met
-        return (
-            password.length >= minLength &&
-            hasUppercase &&
-            hasLowercase &&
-            hasDigit &&
-            hasSpecialChar
-        );
-    }
-
     function updateEmail(e) {
-        setEmail(e.target.value)
-        console.log("email: ", isValidEmail(email))
-        setIsEmailValid(isValidEmail(email))
-    }
-
-    function updatePassword(e) {
-        setPassword(e.target.value)
-        console.log("password: ", isValidPassword(password))
-        setIsPasswordValid(isValidPassword(password))
+         if(e.target.value!==''){
+            setIsEmailValid(isValidEmail(userData['email']))
+        }
     }
 
     function handelSubmit() {
@@ -85,13 +53,20 @@ export default function LoginPage() {
                     <span>Login</span>
                 </Center>
                 <Flex flexDirection='column' gap='20px'>
-                    <FormControl>
+                    <FormControl isRequired={true} isInvalid={!isEmailValid}>
                         <FormLabel>Email :</FormLabel>
-                        <Input onChange={updateEmail} type='email' />
+                        <Input onChange={handelUserData} type='email' name='email' onFocus={()=>setIsEmailValid(true)} onBlur={(e)=>updateEmail(e)} />
+                        {isEmailValid ? (
+                            <FormHelperText>
+                                &nbsp;
+                            </FormHelperText>
+                        ) : (
+                            <FormErrorMessage>Email is not correct.</FormErrorMessage>
+                        )}
                     </FormControl>
-                    <FormControl id='password'>
+                    <FormControl id='password' isRequired={true}>
                         <FormLabel>Password :</FormLabel>
-                        <Input onChange={updatePassword} type='password' />
+                        <Input onChange={handelUserData} type='password' />
                     </FormControl>
                     <Button onSubmit={handelSubmit} className='text-white bg-gray-800'>Login</Button>
                 </Flex>

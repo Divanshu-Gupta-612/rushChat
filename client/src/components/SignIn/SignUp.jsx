@@ -14,13 +14,15 @@ import apiAuthInstance from '../../api/authApi';
 import { useState } from 'react';
 
 export default function LoginPage() {
-    const [userData, setUserData] = useState();
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [rePassword, setRePassword] = useState('')
+    const [userData, setUserData] = useState({
+        'email' : '',
+        'password' : '',
+        're-password' : '',
+        'username' : ''
+    });
     const [isEmailValid, setIsEmailValid] = useState(true)
     const [isPasswordValid, setIsPasswordValid] = useState(true)
-    const [isPasswordMatch, setIsPasswordMatch] = useState(true)
+    const [isPasswordMatch, setIsPasswordMatch] = useState(0)
 
     function handelUserData(e) {
         e.preventDefault();
@@ -63,23 +65,32 @@ export default function LoginPage() {
     }
 
     function updateEmail(e) {
-        setEmail(e.target.value)
-        setIsEmailValid(isValidEmail(email))
-        console.log(email, isEmailValid);
-    }
-
-    function updateRePassword(e) {
-        setRePassword(e.target.value)
-        setIsPasswordMatch(
-            password===rePassword
-        )
-        console.log(rePassword, password, isPasswordMatch, !(password!==rePassword));
+        if(e.target.value!==''){
+            setIsEmailValid(isValidEmail(userData['email']))
+        }
     }
 
     function updatePassword(e) {
-        setPassword(e.target.value)
-        setIsPasswordValid(isValidPassword(password))
-        console.log(password, isPasswordValid);
+        if(e.target.value!==''){
+            setIsPasswordValid(isValidPassword(userData['password']))
+            if(userData['re-password']!==''){
+                if(userData['re-password'] === userData['password']){
+                    setIsPasswordMatch(2)
+                }else{
+                    setIsPasswordMatch(0)
+                }
+            }
+        }
+    }
+
+    function updateRePassword(e) {
+        if(e.target.value!==''){
+            if(e.target.value === userData['password']){
+                setIsPasswordMatch(2)
+            }else{
+                setIsPasswordMatch(0)
+            }
+        }
     }
 
     function handelUserData(e) {
@@ -103,44 +114,52 @@ export default function LoginPage() {
                 </Center>
                 <Flex flexDirection='column' gap='15px'>
 
-                    <FormControl isInvalid={!isEmailValid}>
+                    <FormControl isInvalid={!isEmailValid} isRequired={true}>
                         <FormLabel>Email :</FormLabel>
-                        <Input onChange={(e) => { handelUserData(e); updateEmail(e) }} type='email' name='email' />
+                        <Input onChange={(e) => handelUserData(e) } type='email' name='email' onFocus={()=>setIsEmailValid(true)} onBlur={(e)=>updateEmail(e)} />
                         {isEmailValid ? (
                             <FormHelperText>
-                                Enter the email.
+                                &nbsp;
                             </FormHelperText>
                         ) : (
-                            <FormErrorMessage>Email is required.</FormErrorMessage>
+                            <FormErrorMessage>Email is not correct.</FormErrorMessage>
                         )}
                     </FormControl>
 
-                    <FormControl>
+                    <FormControl isRequired={true}>
                         <FormLabel>Username :</FormLabel>
-                        <Input onChange={handelUserData} type='text' name='username' />
+                        <Input onChange={handelUserData} type='text' name='username'/>
+                        <FormHelperText>
+                            &nbsp;
+                        </FormHelperText>
                     </FormControl>
 
-                    <FormControl isInvalid={!isPasswordValid}>
+                    <FormControl isInvalid={!isPasswordValid} isRequired={true}>
                         <FormLabel>Password :</FormLabel>
-                        <Input onChange={(e) => { handelUserData(e); updatePassword(e) }} type='password' name='password' />
+                        <Input onChange={(e) => handelUserData(e)} type='password' name='password' onFocus={()=>setIsPasswordValid(true)} onBlur={(e)=>updatePassword(e)} />
                         {isPasswordValid ?
                             <FormHelperText>
-                                Enter the password. {password}
+                                &nbsp;
                             </FormHelperText>
                             :
-                            <FormErrorMessage>Invalid Password {password}</FormErrorMessage>
+                            <FormErrorMessage>Invalid Password </FormErrorMessage>
                         }
                     </FormControl>
 
-                    <FormControl isInvalid={!isPasswordMatch}>
+                    <FormControl isInvalid={!isPasswordMatch} isRequired={true}>
                         <FormLabel>Re-Password :</FormLabel>
-                        <Input onChange={(e)=>{handelUserData(e); updateRePassword(e)}} type='password' name='re-password' />
-                        {isPasswordMatch ?
-                            <FormHelperText color='green'>
-                                Password Matched. {rePassword}
+                        <Input onChange={(e)=>handelUserData(e)} type='password' name='re-password' onFocus={()=>setIsPasswordMatch(1)} onBlur={(e)=>updateRePassword(e)} />
+                        {!isPasswordMatch==0 ?
+                            (isPasswordMatch==1 ?
+                            <FormHelperText >
+                                &nbsp;
                             </FormHelperText>
+                            : 
+                            <FormHelperText color='green'>
+                                Password Matched
+                            </FormHelperText>)
                             :
-                            <FormErrorMessage>Invalid Password {rePassword}</FormErrorMessage>
+                            <FormErrorMessage>Password not matched </FormErrorMessage>
                         }
                     </FormControl>
 
