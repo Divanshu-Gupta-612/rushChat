@@ -43,6 +43,11 @@ function HomePage() {
     userLogout();
   }
 
+  function handleKeyDown(e){
+    if (e.key === 'Enter') {
+      forSendingMsg();
+    }
+  }
   return (
     <Flex className=" w-[100%] h-[100vh] p-5 bg-gray-800 text-white gap-3">
       <Box className=" w-1/5 border p-5 rounded-xl">
@@ -124,8 +129,12 @@ function HomePage() {
             </Box>
           </Box>
           <Flex gap='10px'>
-            <Input onChange={(e) => setMsg(e.target.value)} value={msg} placeholder="Enter Message" />
-            <Button onClick={forSendingMsg} className="border text-center px-6">
+            <Input 
+              onChange={(e) => setMsg(e.target.value)} 
+              value={msg} placeholder="Enter Message" 
+              onKeyDown={handleKeyDown}
+              />
+            <Button onClick={forSendingMsg} onEnter={forSendingMsg} className="border text-center px-6">
               <AiOutlineSend className="text-black text-xl" />
             </Button>
           </Flex>
