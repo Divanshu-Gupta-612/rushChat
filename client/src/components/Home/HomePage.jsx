@@ -17,8 +17,9 @@ import { useAuth } from "../../common/useAuth";
 import { Socket, io } from 'socket.io-client'
 import { useEffect, useState } from "react";
 
+const socket = io();
+
 function HomePage() {
-  const socket = io();
 
   const [msg, setMsg] = useState('');
 
