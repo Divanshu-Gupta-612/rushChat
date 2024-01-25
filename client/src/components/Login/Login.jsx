@@ -59,7 +59,7 @@ export default function LoginPage() {
                 password : ''
             })
 
-            console.log("This is response data from Login",res)
+            console.log("This is response data from Login",res);
             userLogin({userdata: res?.data?.userDetail});
             toast({
                 title: 'Login Sucessfull.',
@@ -71,8 +71,7 @@ export default function LoginPage() {
             navi('/');
         }).catch((err)=>{
             console.log("The Error from login page : ",err,'\n',err.message);
-
-            console.log("/n  this from err handling : ",err?.response?.data)
+            console.log("/n  this from err handling : ",err?.response?.data);
             toast({
                 title: err?.response?.data?.msg,
                 description: "Tip : create an account",
