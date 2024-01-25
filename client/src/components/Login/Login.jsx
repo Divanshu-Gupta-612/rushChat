@@ -10,11 +10,13 @@ import {
     Button,
     Flex
 } from '@chakra-ui/react';
+import { GoArrowRight } from "react-icons/go";
 import { FaRocketchat } from "react-icons/fa";
 import apiAuthInstance from '../../api/authApi';
 import { useAuth } from '../../common/useAuth';
 import {useNavigate} from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
     const {userLogin} = useAuth();
@@ -93,7 +95,7 @@ export default function LoginPage() {
             userLogin({userdata: res?.data?.userDetail});
             toast({
                 title: 'Login Sucessfull.',
-                description: "We've created your account for you.",
+                description: "We've logged into your account for you.",
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
@@ -143,6 +145,11 @@ export default function LoginPage() {
                         onClick={handelSubmit}  
                         className='text-white bg-gray-800'
                     >Login</Button>
+                    <Box m={'auto'} className=''>
+                        <Link to='/auth/signup' className='flex items-center'>
+                            Create you Account  <GoArrowRight className='ml-2'/>
+                        </Link>
+                    </Box>
                 </Flex>
             </Box>
         </Box>

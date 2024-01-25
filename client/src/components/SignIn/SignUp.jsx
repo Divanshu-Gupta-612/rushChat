@@ -7,14 +7,28 @@ import {
     Input,
     Center,
     Button,
-    Flex
+    Flex,
+    useToast,
+    Text,
+    Link as Linker
 } from '@chakra-ui/react';
 import { FaRocketchat } from "react-icons/fa";
+import { GoArrowRight } from "react-icons/go";
 import apiAuthInstance from '../../api/authApi';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
+    
+    // Toast is for the notification on screen 
+    const toast = useToast();
+    //Form data is inside the userData state
     const [userData, setUserData] = useState();
+
+    //This is for useNavigate hook to regirect user to other routes
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [rePassword, setRePassword] = useState('')
@@ -24,7 +38,6 @@ export default function LoginPage() {
 
     function handelUserData(e) {
         e.preventDefault();
-
         setUserData({
             ...userData, [e.target.name]: e.target.value,
         })
@@ -91,7 +104,30 @@ export default function LoginPage() {
 
     function handelSubmit(e) {
         e.preventDefault();
-        // apiAuthInstance.post('/ath')
+        apiAuthInstance.post('/auth/user/register', {
+            email : userData.email,
+            username : userData.username,
+            password : password,
+        }).then((res)=>{
+            console.log("This is the response data from signUp Page : ",res?.data);
+            toast({
+                title: res?.data?.msg,
+                description: "We've created your account for you. Please login",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            })
+            navigate('/auth/login');
+        }).catch((err)=>{
+            console.log("This is the error from the signup page", err);
+            toast({
+                title: err?.response?.data?.msg,
+                description: "Tip : Use other detail if you have tried many times",
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        })
     }
 
     return (
@@ -117,12 +153,18 @@ export default function LoginPage() {
 
                     <FormControl>
                         <FormLabel>Username :</FormLabel>
-                        <Input onChange={handelUserData} type='text' name='username' />
+                        <Input 
+                            onChange={handelUserData} 
+                            type='text' 
+                            name='username' />
                     </FormControl>
 
                     <FormControl isInvalid={!isPasswordValid}>
                         <FormLabel>Password :</FormLabel>
-                        <Input onChange={(e) => { handelUserData(e); updatePassword(e) }} type='password' name='password' />
+                        <Input 
+                            onChange={(e) => { handelUserData(e); updatePassword(e) }} 
+                            type='password' 
+                            name='password'/>
                         {isPasswordValid ?
                             <FormHelperText>
                                 Enter the password. {password}
@@ -144,7 +186,12 @@ export default function LoginPage() {
                         }
                     </FormControl>
 
-                    <Button className='text-white bg-gray-800'>SignUp</Button>
+                    <Button onClick={handelSubmit} className='text-white bg-gray-800'>SignUp</Button>
+                    <Box m={'auto'} className=''>
+                        <Link to='/auth/login' className='flex items-center'>
+                            Already have an account  <GoArrowRight className='ml-2'/>
+                        </Link>
+                    </Box>
                 </Flex>
             </Box>
         </Box>
