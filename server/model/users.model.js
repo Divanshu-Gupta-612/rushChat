@@ -5,6 +5,7 @@ function creating_Schema(){
         email : {
             type : String,
             unique : true,
+            lowercase:true,
             required : true,
         },
         userName : {

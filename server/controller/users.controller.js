@@ -36,12 +36,13 @@ const userLogin = async(req, res)=>{
             return res.status(404).json({msg: "User does'nt exist"}); // throw this error and catch on the catch function
         }
         const passwordMatch = await bcrypt.compare(password,userExist.password); 
-
         if(passwordMatch){
-            return res.json({msg:"User is login sucessFull", userDetail : userExist});
+            return res.status(200).json({msg:"User is login sucessFull", userDetail : userExist});
+        }else{
+            return res.status(401).json({ msg: "Incorrect Password" });
         }
-        throw new Error({message:"Incorrect Password", passwordMatch});
     }catch(err){
+        console.log("this is from the user controller ",err);
         return res.json({msg: err.message});
     }
 };

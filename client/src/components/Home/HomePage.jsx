@@ -13,9 +13,15 @@ import {
 } from "@chakra-ui/react"
 import {FaRocketchat} from 'react-icons/fa6'
 import { AiOutlineSend } from "react-icons/ai";
+import { useAuth } from "../../common/useAuth";
+
 
 function HomePage() {
 
+  const {userLogout} = useAuth(); 
+  function userLogOutFunction(){
+    userLogout();
+  }
   return (
     <Flex className=" w-[100%] h-[100vh] p-5 bg-gray-800 text-white gap-3">
       <Box className=" w-1/5 border p-5 rounded-xl">
@@ -53,7 +59,7 @@ function HomePage() {
           <Spacer />
           <Flex gap='20px'>
             <Button>Create Room</Button>
-            <Button>Logout</Button>
+            <Button onClick={userLogOutFunction}>Logout</Button>
           </Flex>
         </Flex>
         <Box p='10px' width='100%' className=" grow flex flex-col">
