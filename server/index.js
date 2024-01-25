@@ -21,9 +21,9 @@ database_connectivity(process.env.MongoDBuRL);
 
 // ----------------------------------------- socket io logic d---------------------------------------- 
 
-// io.on('connection',(socket)=>{
+io.on('connection',(socket)=>{
     
-// })
+})
 
 server.listen(process.env.PORT, ()=>{
     console.log("The server is Running on http://localhost:"+process.env.PORT);
