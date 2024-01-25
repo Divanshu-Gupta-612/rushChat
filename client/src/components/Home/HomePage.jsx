@@ -1,27 +1,65 @@
-import { 
-  Box, 
-  Button, 
-  Flex, 
-  Center, 
-  Spacer, 
-  Input, 
-  Stack, 
-  Avatar, 
+import {
+  Box,
+  Button,
+  Flex,
+  Center,
+  Spacer,
+  Input,
+  Stack,
+  Avatar,
   AvatarBadge,
   Heading,
   Text
 } from "@chakra-ui/react"
-import {FaRocketchat} from 'react-icons/fa6'
+import { FaRocketchat } from 'react-icons/fa6'
 import { AiOutlineSend } from "react-icons/ai";
 import { useAuth } from "../../common/useAuth";
-
+import { Socket, io } from 'socket.io-client'
+import { useEffect, useState } from "react";
 
 function HomePage() {
+  const socket = io();
 
-  const {userLogout} = useAuth(); 
-  function userLogOutFunction(){
+  const [msg, setMsg] = useState('');
+
+  const msgShowArea = document.querySelector('.msgShowArea');
+  
+  function forSendingMsg() {
+    const msgTemplate = `<Box>
+                        <Box className="float-left flex items-center">
+                          <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                          <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black">
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
+                          </Text>
+                        </Box>
+                      </Box>`
+    socket.emit('msgSent', msg);
+    msgShowArea.appendChild(msgTemplate);
+  }
+
+  // useEffect(()=>{
+    socket.on('receiveMsg' , ({id, msg})=>{
+      const msgTemplate = `
+      <Box>
+        <Box className="float-right flex items-center">
+          <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black">
+            ${msg}
+          </Text>
+          <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
+        </Box>
+      </Box>
+      `
+      msgShowArea.appendChild(msgTemplate);
+    })
+  // })
+
+  // Logout Function
+  const { userLogout } = useAuth();
+  
+  function userLogOutFunction() {
     userLogout();
   }
+
   return (
     <Flex className=" w-[100%] h-[100vh] p-5 bg-gray-800 text-white gap-3">
       <Box className=" w-1/5 border p-5 rounded-xl">
@@ -43,7 +81,7 @@ function HomePage() {
               <Text fontSize='xs'>Active now</Text>
             </Box>
           </Box>
-          
+
         </Box>
       </Box>
       <Flex className=" w-4/5 border rounded-xl" flexDirection='column'>
@@ -51,10 +89,10 @@ function HomePage() {
           <Center>
             {/* Logo */}
             <Box className="Logo flex gap-2 items-center border p-2 rounded-lg">
-              <FaRocketchat className='text-green-600 text-3xl'/>
+              <FaRocketchat className='text-green-600 text-3xl' />
               <Text size='md' className="rounded-lg text-green-400 font-bold underline">rushChat</Text>
             </Box>
-            
+
           </Center>
           <Spacer />
           <Flex gap='20px'>
@@ -78,28 +116,28 @@ function HomePage() {
               </Stack>
             </Box>
             <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3">
-                <Box>
-                  <Box className="float-left flex items-center">
-                    <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                    <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black">
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
-                    </Text>
-                  </Box>
+              <Box>
+                <Box className="float-left flex items-center">
+                  <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                  <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black">
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
+                  </Text>
                 </Box>
-                <Box>
-                  <Box className="float-right flex items-center">
-                    <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black">
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
-                    </Text>
-                    <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
-                  </Box>
+              </Box>
+              <Box>
+                <Box className="float-right flex items-center">
+                  <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black">
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, quos.
+                  </Text>
+                  <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
                 </Box>
+              </Box>
             </Box>
           </Box>
           <Flex gap='10px'>
-            <Input placeholder="Enter Message"/>
-            <Button className="border text-center px-6"> 
-              <AiOutlineSend  className="text-black text-xl"/> 
+            <Input onChange={(e)=>setMsg(e.target.value)} placeholder="Enter Message" />
+            <Button onClick={forSendingMsg} className="border text-center px-6">
+              <AiOutlineSend className="text-black text-xl" />
             </Button>
           </Flex>
         </Box>
