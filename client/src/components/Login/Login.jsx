@@ -36,11 +36,11 @@ export default function LoginPage() {
         })
     }
 
-    // function isValidEmail(email) {
-    //     // Basic email validation using a regular expression
-    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //     return emailRegex.test(email);
-    // }
+    function isValidEmail(email) {
+        // Basic email validation using a regular expression
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
 
     function updateEmail(e) {
          if(e.target.value!==''){
