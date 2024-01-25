@@ -15,15 +15,25 @@ import { FaRocketchat } from 'react-icons/fa6'
 import { AiOutlineSend } from "react-icons/ai";
 import { useAuth } from "../../common/useAuth";
 import { Socket, io } from 'socket.io-client'
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 const socket = io();
 
 function HomePage() {
   // Logout Function
   const { userLogout } = useAuth();
-
   const [msg, setMsg] = useState('');
   const [userMsg, setUserMsg] = useState([]);
+  const chatContainerRef = useRef(null);
+  
+  useEffect(() => {
+    scrollToBottom();
+  }, [userMsg]);
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  };
 
   function forSendingMsg(){
     setUserMsg([
@@ -103,7 +113,7 @@ function HomePage() {
                 </Box>
               </Stack>
             </Box>
-            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-[700px] overflow-scroll">
+            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-[700px] overflow-scroll"  ref={chatContainerRef}>
               {
                 userMsg.map((item, index) =>
                   (item.type === 'sent') ?
