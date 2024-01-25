@@ -19,7 +19,7 @@ app.use('/auth/user', userRouter);
 
 database_connectivity(process.env.MongoDBuRL);
 
-// ----------------------------------------- socket io logic d---------------------------------------- 
+// ----------------------------------------- socket io logic ---------------------------------------- 
 
 io.on('connection',(socket)=>{
     const id = socket.id.substring(0,4);
