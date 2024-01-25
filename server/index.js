@@ -22,10 +22,15 @@ database_connectivity(process.env.MongoDBuRL);
 // ----------------------------------------- socket io logic d---------------------------------------- 
 
 io.on('connection',(socket)=>{
-    console.log("socket is Connected")
+    console.log('User connected');
+
     const id = socket.id.substring(0,4);
     socket.on("msgSent", (msg)=>{
         socket.broadcast.emit('receiveMsg', {id : id, msg : msg});
+    })
+
+    socket.on('disconnect', (msg)=>{
+        console.log('User disconnected');
     })
 })
 

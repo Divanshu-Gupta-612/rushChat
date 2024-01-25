@@ -104,7 +104,7 @@ function HomePage() {
                 </Box>
               </Stack>
             </Box>
-            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-[700px] overflow-scroll">
+            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-80 overflow-auto">
               {
                 userMsg.map((item, index) =>
                   (item.type === 'sent') ?
