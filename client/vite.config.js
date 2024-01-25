@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/socket.io': {
-        target: 'https://rush-chat-site.onrender.com/',
+        target: 'https://rush-chat-server.onrender.com/',
         ws: true,
       },
     },
