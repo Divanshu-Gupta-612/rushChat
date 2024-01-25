@@ -4,6 +4,7 @@ import HomePage from '../components/Home/HomePage';
 import SignUp from '../components/SignIn/SignUp';
 import LoginPage from '../components/Login/Login';
 import LandingPage from '../components/LandingPage/landingPage';
+import PageNotFound from '../components/ErrorPage/PageNotFound';
 import {useAuth} from './useAuth';
 
 export default function AllRoutes() {
@@ -11,19 +12,18 @@ export default function AllRoutes() {
     return (
         <>
             <Routes>
-
                 {
-                    userData ? <>
-                        <Route exact path='/' element={<HomePage/>} />
+                    (userData)? <>
+                        <Route path='/' element={<HomePage/>} />
                     </>
                     :
                     <>
+                        <Route path='/' element={<LandingPage/>} />
+                        <Route path='/auth/login' element={<LoginPage/>} />
+                        <Route path='/auth/SignUp' element={<SignUp/>} />
                     </>
                 }
-                <Route exact path='/' element={<LandingPage/>} />
-                
-                <Route path='/auth/login' element={<LoginPage/>} />
-                <Route path='/auth/SignUp' element={<SignUp/>} />
+                <Route path='*' element={<PageNotFound/>} />
             </Routes>
         </>
     )
