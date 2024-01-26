@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiAuthInstance = axios.create({
-    baseURL : 'http://localhost:8000',
+    baseURL : 'https://as-b75n.onrender.com',
     headers:{
         Authorization : localStorage.getItem('accessToken'),
         "Content-Type": "application/json",

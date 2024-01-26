@@ -25,6 +25,7 @@ io.on('connection',(socket)=>{
     console.log('User connected');
 
     const id = socket.id.substring(0,4);
+    io.emit('id', socket.id)
     socket.on("msgSent", (msg)=>{
         socket.broadcast.emit('receiveMsg', {id : id, msg : msg});
     })

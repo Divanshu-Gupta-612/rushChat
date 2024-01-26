@@ -17,10 +17,13 @@ import { useAuth } from "../../common/useAuth";
 import { Socket, io } from 'socket.io-client'
 import { useState } from "react";
 
-const socket = io();
+const socket = io('https://as-b75n.onrender.com', {
+  transports: ['websocket'], // Ensure WebSocket transport is used
+});
 
 function HomePage() {
   // Logout Function
+
   const { userLogout } = useAuth();
 
   const [msg, setMsg] = useState('');
@@ -33,6 +36,10 @@ function HomePage() {
     socket.emit('msgSent', msg);
     setMsg("");
   };
+
+  socket.on('id', (msg)=>{
+    console.log("user : ", msg);
+  })
 
   socket.on('receiveMsg', ({ id, msg }) => {
     setUserMsg([
