@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/socket.io': {
-        target: 'https://as-b75n.onrender.com',
+        // target: 'https://as-b75n.onrender.com',
+        target: 'http://localhost:8000',
         ws: true,
         changeOrigin: true, // Add this line
       },
