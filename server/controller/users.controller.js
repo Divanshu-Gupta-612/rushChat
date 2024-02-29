@@ -1,6 +1,6 @@
 const userModel = require('../model/users.model');
 const bcrypt = require('bcrypt');
-const {jwtTokenGen} = require('../service/jwtgenrator');
+const { jwtTokenGen } = require('../service/jwtgenrator');
 
 const userRegistration = async(req, res)=>{
     try{
