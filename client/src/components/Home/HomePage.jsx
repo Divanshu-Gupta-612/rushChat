@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Button,
@@ -9,43 +10,67 @@ import {
   Avatar,
   AvatarBadge,
   Heading,
-  Text
+  Text,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Select
 } from "@chakra-ui/react"
 import { FaRocketchat } from 'react-icons/fa6'
 import { AiOutlineSend } from "react-icons/ai";
 import { useAuth } from "../../common/useAuth";
 import { Socket, io } from 'socket.io-client'
-import { useState, useRef, useEffect } from "react";
-const socket = io();
+import { useState } from "react";
+
+// const socket = io('https://as-b75n.onrender.com', {
+//   transports: ['websocket'], // Ensure WebSocket transport is used
+// });
+
+const socket = io()
 
 function HomePage() {
   // Logout Function
+
   const { userLogout } = useAuth();
+  let count = 0;
+
   const [msg, setMsg] = useState('');
   const [userMsg, setUserMsg] = useState([]);
-  const chatContainerRef = useRef(null);
-  
-  useEffect(() => {
-    scrollToBottom();
-  }, [userMsg]);
+  const [roomsList, setRoomsList] = useState([]);
+  const [currentRoom, setCurrentRoom] = useState('');
+  const [room, setRoom] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = React.useRef()
 
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  };
-
-  function forSendingMsg(){
+  function forSendingMsg() {
     setUserMsg([
-      ...userMsg, { type: 'sent', content: msg, id : "You"}
+      ...userMsg, { type: 'sent', content: msg, id: "You" }
     ])
-    socket.emit('msgSent', msg);
+    console.log(room, "msg sent", msg);
+    socket.emit('msgSent', currentRoom, msg);
     setMsg("");
   };
 
+  socket.on('id', (msg) => {
+    console.log("user : ", msg);
+  })
+
+  socket.on('customRooms', (msg) => {
+    setRoomsList(Object.entries(msg))
+    console.log(count, "rooms list : ", Object.entries(msg));
+  })
+
   socket.on('receiveMsg', ({ id, msg }) => {
+    console.log(msg);
     setUserMsg([
-      ...userMsg, { type: 'reveived', content: msg , id : id}
+      ...userMsg, { type: 'reveived', content: msg, id: id }
     ]);
   });
 
@@ -53,33 +78,74 @@ function HomePage() {
     userLogout();
   }
 
-  function handleKeyDown(e){
+  function handleKeyDown(e) {
     if (e.key === 'Enter') {
       forSendingMsg();
     }
   }
+
+  function handelUserData(e) {
+    e.preventDefault();
+    setRoom(e.target.value)
+  }
+
+  function createRoom() {
+    socket.emit('createRoom', room)
+    onClose()
+  }
+
+  function joinRoom(room, newRoom) {
+    console.log(room, newRoom);
+    socket.emit('joinRoom', room, newRoom)
+    setCurrentRoom(newRoom)
+    onClose()
+  }
+
   return (
     <Flex className=" w-[100%] h-[100vh] p-5 bg-gray-800 text-white gap-3">
-      <Box className=" w-1/5 border p-5 rounded-xl">
-        <Heading size='md' className="text-center uppercase mb-3">
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Room Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex flexDirection='column' gap='20px'>
+              <FormControl isRequired={true}>
+                <FormLabel>Name :</FormLabel>
+                <Input type='email' name='email' onChange={handelUserData} />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Access :</FormLabel>
+                <Select placeholder='Public'>
+                  <option value='Private'>Private</option>
+                </Select>
+              </FormControl>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={createRoom}>
+              Create
+            </Button>
+            <Button variant='ghost' onClick={onClose}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Box className=" w-1/5 border rounded-xl h-full flex flex-col scrollbar">
+        <Heading size='md' className="text-center uppercase mb-3 p-5">
           Room List
         </Heading>
-        <Box className="flex flex-col gap-2">
-          <Box className="border p-2 rounded-xl flex items-center">
-
-            {/* Avater part below This */}
-            <Box className="avater-part pr-2">
-              <Avatar size='sm'>
-                <AvatarBadge borderColor='papayawhip' bg='green' boxSize='1em' />
-              </Avatar>
-            </Box>
-
-            <Box className="text-center">
-              <Text fontSize='sm'>Room Name</Text>
-              <Text fontSize='xs'>Active now</Text>
-            </Box>
-          </Box>
-
+        <Box className="flex flex-col gap-2 grow-1 overflow-auto px-1 m-1 " >
+          {
+            roomsList.map((item, index) =>
+              <Button className="border p-2 rounded-xl flex items-center" key={index} onClick={() => joinRoom(room, item[0])}>
+                <Box className="text-center" key={index}>
+                  <Text fontSize='sm'>{item[0]}</Text>
+                  {/* <Text fontSize='xs'>Active now</Text> */}
+                </Box>
+              </Button>
+            )
+          }
         </Box>
       </Box>
       <Flex className=" w-4/5 border rounded-xl" flexDirection='column'>
@@ -94,12 +160,12 @@ function HomePage() {
           </Center>
           <Spacer />
           <Flex gap='20px'>
-            <Button>Create Room</Button>
+            <Button onClick={onOpen}>Create Room</Button>
             <Button onClick={userLogOutFunction}>Logout</Button>
           </Flex>
         </Flex>
         <Box p='10px' width='100%' className=" grow flex flex-col">
-          <Box className="grow rounded-lg" mb='10px'>
+          <Box className="grow rounded-lg  scrollbar" mb='10px'>
             <Box className="border-2 border-yellow-500 rounded-xl p-3">
               <Stack direction='row' spacing={4} className="flex flex-col items-center">
                 <Box className="p-0.5 rounded-full border-2 border-gray-300">
@@ -113,7 +179,7 @@ function HomePage() {
                 </Box>
               </Stack>
             </Box>
-            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-[700px] overflow-scroll"  ref={chatContainerRef}>
+            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-80 overflow-auto">
               {
                 userMsg.map((item, index) =>
                   (item.type === 'sent') ?
@@ -129,9 +195,9 @@ function HomePage() {
                     <Box key={index}>
                       <Box className="float-left flex items-center">
                         <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                          <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black flex flex-col">
+                        <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black flex flex-col">
                           <span className="text-xs font-medium">{item.id}</span><span> {item.content} </span>
-                          </Text>
+                        </Text>
                       </Box>
                     </Box>
                 )
@@ -139,11 +205,11 @@ function HomePage() {
             </Box>
           </Box>
           <Flex gap='10px'>
-            <Input 
-              onChange={(e) => setMsg(e.target.value)} 
-              value={msg} placeholder="Enter Message" 
+            <Input
+              onChange={(e) => setMsg(e.target.value)}
+              value={msg} placeholder="Enter Message"
               onKeyDown={handleKeyDown}
-              />
+            />
             <Button onClick={forSendingMsg} onEnter={forSendingMsg} className="border text-center px-6">
               <AiOutlineSend className="text-black text-xl" />
             </Button>
