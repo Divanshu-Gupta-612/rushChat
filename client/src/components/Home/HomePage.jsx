@@ -54,7 +54,7 @@ function HomePage() {
       ...userMsg, { type: 'sent', content: msg, id: "You" }
     ])
     console.log(room, "msg sent", msg);
-    socket.emit('msgSent', currentRoom, msg);
+    socket.emit('msgSent', currentRoom, msg);9
     setMsg("");
   };
 

@@ -49,12 +49,12 @@ io.on('connection', (socket) => {
         io.emit("customRooms", custom_rooms)
     })
 
-    socket.on('joinRoom', (msg1, msg2) => {
-        if(msg1!==''){
-            socket.leave(msg1);
+    socket.on('joinRoom', (prevRoom, currentRoom) => {
+        if(prevRoom!==''){
+            socket.leave(prevRoom);
         }
-        console.log(msg1, msg2);
-        socket.join(msg2);
+        console.log(prevRoom, currentRoom);
+        socket.join(currentRoom);
         let rooms = io.sockets.adapter.rooms;
         console.log("j rooms: ", rooms)
     })
