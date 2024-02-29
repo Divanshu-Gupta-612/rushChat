@@ -44,6 +44,7 @@ io.on('connection', (socket) => {
             custom_rooms[msg]=true;
         }
         let rooms = io.sockets.adapter.rooms;
+        console.log(rooms);
         console.log("custom_rooms: ", custom_rooms)
         console.log("a rooms: ", rooms)
         io.emit("customRooms", custom_rooms)

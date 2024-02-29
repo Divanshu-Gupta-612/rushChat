@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiAuthInstance = axios.create({
-    baseURL : 'https://rush-chat-server.onrender.com/',
+    baseURL : 'https://rushchat.onrender.com',
     headers:{
         Authorization : localStorage.getItem('accessToken'),
         "Content-Type": "application/json",
