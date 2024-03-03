@@ -4,6 +4,7 @@ const database_connectivity = require('./config/dbconfig');
 const cors = require('cors');
 const { Server } = require('socket.io');
 require('dotenv').config();
+// const response = require('@google/generative-ai')
 
 const app = express();
 const server = http.createServer(app);
@@ -15,7 +16,8 @@ app.use(cors());
 const io = new Server(server);
 
 const userRouter = require('./routes/users.routes');
-const { log } = require('console');
+const runChat = require('./AI/AIChat');
+const chat = require('./AI/AIChat');
 app.use('/auth/user', userRouter);
 
 database_connectivity(process.env.MongoDBuRL);
@@ -34,14 +36,20 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('id', socket.id)
     socket.emit("customRooms", custom_rooms)
 
-    socket.on('msgSent', (room, msg) => {
-        console.log(room, msg);
-        socket.to(room).emit('receiveMsg', { id: id, msg: msg });
+    socket.on('msgSent', async (room, msg) => {
+        if (room === 'AI') {
+            const res = await runChat(msg)
+            // console.log("res: ", res);
+            socket.emit('receiveMsg', { id: 'AI', msg: res });
+        }else{
+            // console.log(room, msg);
+            socket.to(room).emit('receiveMsg', { id: id, msg: msg });
+        }
     })
 
     socket.on('createRoom', (msg) => {
-        if(custom_rooms[msg]===undefined){
-            custom_rooms[msg]=true;
+        if (custom_rooms[msg] === undefined) {
+            custom_rooms[msg] = true;
         }
         let rooms = io.sockets.adapter.rooms;
         console.log("custom_rooms: ", custom_rooms)
@@ -50,11 +58,13 @@ io.on('connection', (socket) => {
     })
 
     socket.on('joinRoom', (prevRoom, currentRoom) => {
-        if(prevRoom!==''){
+        if (prevRoom !== '') {
             socket.leave(prevRoom);
         }
         console.log(prevRoom, currentRoom);
-        socket.join(currentRoom);
+        if (currentRoom !== 'AI') {
+            socket.join(currentRoom);
+        }
         let rooms = io.sockets.adapter.rooms;
         console.log("j rooms: ", rooms)
     })

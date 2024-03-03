@@ -29,10 +29,6 @@ import { useAuth } from "../../common/useAuth";
 import { Socket, io } from 'socket.io-client'
 import { useState } from "react";
 
-// const socket = io('https://as-b75n.onrender.com', {
-//   transports: ['websocket'], // Ensure WebSocket transport is used
-// });
-
 const socket = io()
 
 function HomePage() {
@@ -43,18 +39,19 @@ function HomePage() {
 
   const [msg, setMsg] = useState('');
   const [userMsg, setUserMsg] = useState([]);
-  const [roomsList, setRoomsList] = useState([]);
+  const [roomsList, setRoomsList] = useState([['AI']]);
   const [currentRoom, setCurrentRoom] = useState('');
   const [room, setRoom] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = React.useRef()
 
   function forSendingMsg() {
+    console.log(currentRoom, "msg sent", msg);
+    console.log("messages: ", userMsg);
     setUserMsg([
       ...userMsg, { type: 'sent', content: msg, id: "You" }
     ])
-    console.log(room, "msg sent", msg);
-    socket.emit('msgSent', currentRoom, msg);9
+    socket.emit('msgSent', currentRoom, msg);
     setMsg("");
   };
 
@@ -95,14 +92,18 @@ function HomePage() {
   }
 
   function joinRoom(room, newRoom) {
-    console.log(room, newRoom);
-    socket.emit('joinRoom', room, newRoom)
+    if (currentRoom !== newRoom) {
+      setUserMsg([])
+    }
+    console.log(currentRoom, newRoom);
+    socket.emit('joinRoom', currentRoom, newRoom)
     setCurrentRoom(newRoom)
+    console.log('new room', currentRoom);
     onClose()
   }
 
   return (
-    <Flex className=" w-[100%] h-[100vh] p-5 bg-gray-800 text-white gap-3">
+    <Flex className=" w-[100%] h-[100vh] p-5 bg-black text-white gap-3">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -124,7 +125,7 @@ function HomePage() {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={createRoom}>
+            <Button colorScheme='blue' mr={3} onClick={()=>createRoom()}>
               Create
             </Button>
             <Button variant='ghost' onClick={onClose}>Close</Button>
@@ -136,6 +137,12 @@ function HomePage() {
           Room List
         </Heading>
         <Box className="flex flex-col gap-2 grow-1 overflow-auto px-1 m-1 " >
+          <Button className="border p-2 rounded-xl flex items-center" onClick={() => joinRoom(room, "AI")}>
+            <Box className="text-center">
+              <Text fontSize='sm'>AI</Text>
+              {/* <Text fontSize='xs'>Active now</Text> */}
+            </Box>
+          </Button>
           {
             roomsList.map((item, index) =>
               <Button className="border p-2 rounded-xl flex items-center" key={index} onClick={() => joinRoom(room, item[0])}>
@@ -149,7 +156,7 @@ function HomePage() {
         </Box>
       </Box>
       <Flex className=" w-4/5 border rounded-xl" flexDirection='column'>
-        <Flex p='10px'>
+        <Flex className=" m-2 border rounded-lg p-2">
           <Center>
             {/* Logo */}
             <Box className="Logo flex gap-2 items-center border p-2 rounded-lg">
@@ -164,57 +171,61 @@ function HomePage() {
             <Button onClick={userLogOutFunction}>Logout</Button>
           </Flex>
         </Flex>
-        <Box p='10px' width='100%' className=" grow flex flex-col">
-          <Box className="grow rounded-lg  scrollbar" mb='10px'>
-            <Box className="border-2 border-yellow-500 rounded-xl p-3">
-              <Stack direction='row' spacing={4} className="flex flex-col items-center">
-                <Box className="p-0.5 rounded-full border-2 border-gray-300">
-                  <Avatar>
-                    <AvatarBadge boxSize='1em' bg='green.500' />
-                  </Avatar>
-                </Box>
-                <Box className="text-center">
-                  <Text fontSize='sm'>Room Name</Text>
-                  <Text fontSize='xs'>Active now</Text>
-                </Box>
-              </Stack>
-            </Box>
-            <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-80 overflow-auto">
-              {
-                userMsg.map((item, index) =>
-                  (item.type === 'sent') ?
-                    <Box key={index}>
-                      <Box className="float-right flex items-center">
-                        <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black flex flex-col">
-                          <span> {item.content} </span><span className="text-xs font-medium">{item.id}</span>
-                        </Text>
-                        <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
-                      </Box>
+        {
+          currentRoom !== '' ?
+            <Box p='10px' width='100%' className=" grow flex flex-col">
+              <Box className="grow rounded-lg  scrollbar" mb='10px'>
+                <Box className="border-2 border-yellow-500 rounded-xl p-3">
+                  <Stack direction='row' spacing={4} className="flex flex-col items-center">
+                    <Box className="p-0.5 rounded-full border-2 border-gray-300">
+                      <Avatar>
+                        <AvatarBadge boxSize='1em' bg='green.500' />
+                      </Avatar>
                     </Box>
-                    :
-                    <Box key={index}>
-                      <Box className="float-left flex items-center">
-                        <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                        <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black flex flex-col">
-                          <span className="text-xs font-medium">{item.id}</span><span> {item.content} </span>
-                        </Text>
-                      </Box>
+                    <Box className="text-center">
+                      <Text fontSize='sm'>{currentRoom}</Text>
+                      <Text fontSize='xs'>Active now</Text>
                     </Box>
-                )
-              }
+                  </Stack>
+                </Box>
+                <Box className="msgShowArea px-5 pt-2 mt-3 flex flex-col gap-3 h-80 overflow-auto">
+                  {
+                    userMsg.map((item, index) =>
+                      (item.type === 'sent') ?
+                        <Box key={index}>
+                          <Box className="float-right flex items-center">
+                            <Text className="bg-green-300 p-3 rounded-tl-xl rounded-br-lg border border-green-400 text-black flex flex-col">
+                              <span> {item.content} </span><span className="text-xs font-medium">{item.id}</span>
+                            </Text>
+                            <Avatar className="ml-3" size='sm' name='Kent Dodds' src='https://bit.ly/kent-c-dodds' />
+                          </Box>
+                        </Box>
+                        :
+                        <Box key={index}>
+                          <Box className="float-left flex items-center">
+                            <Avatar className="mr-3" size='sm' name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                            <Text className="bg-blue-300 p-3 rounded-tr-xl rounded-bl-lg border-blue-400 text-black flex flex-col">
+                              <span className="text-xs font-medium">{item.id}</span><span> {item.content} </span>
+                            </Text>
+                          </Box>
+                        </Box>
+                    )
+                  }
+                </Box>
+              </Box>
+              <Flex gap='10px'>
+                <Input
+                  onChange={(e) => setMsg(e.target.value)}
+                  value={msg} placeholder="Enter Message"
+                  onKeyDown={handleKeyDown}
+                />
+                <Button onClick={forSendingMsg} onEnter={forSendingMsg} className="border text-center px-6">
+                  <AiOutlineSend className="text-black text-xl" />
+                </Button>
+              </Flex>
             </Box>
-          </Box>
-          <Flex gap='10px'>
-            <Input
-              onChange={(e) => setMsg(e.target.value)}
-              value={msg} placeholder="Enter Message"
-              onKeyDown={handleKeyDown}
-            />
-            <Button onClick={forSendingMsg} onEnter={forSendingMsg} className="border text-center px-6">
-              <AiOutlineSend className="text-black text-xl" />
-            </Button>
-          </Flex>
-        </Box>
+            : <></>
+        }
       </Flex>
     </Flex>
   )
